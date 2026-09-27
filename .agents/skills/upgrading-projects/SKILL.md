@@ -45,5 +45,5 @@ Project Upgrade
 - Full validation and evaluation suites pass with zero failures.
 
 # References
-- [AGENTS.md Constitution](file:///e:/AI%20Engineering%20Workflow/AGENTS.md)
-- [Status Manager](file:///e:/AI%20Engineering%20Workflow/.ai/scripts/status-manager.js)
+- [AGENTS.md Constitution](../../../AGENTS.md)
+- [Status Manager](../../../.ai/scripts/status-manager.js)

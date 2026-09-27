@@ -47,5 +47,5 @@ Task Decomposition
 - Every task specifies explicit output paths and acceptance criteria.
 
 # References
-- [Task Graph Manager](file:///e:/AI%20Engineering%20Workflow/.ai/scripts/task-graph.js)
-- [Status Manager](file:///e:/AI%20Engineering%20Workflow/.ai/scripts/status-manager.js)
+- [Task Graph Manager](../../../.ai/scripts/task-graph.js)
+- [Status Manager](../../../.ai/scripts/status-manager.js)

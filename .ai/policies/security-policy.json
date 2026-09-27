@@ -1,0 +1,106 @@
+{
+  "version": "4.0",
+  "description": "Portable deterministic security policy for AI Engineering Workflow across all runtimes",
+  "invariants": [
+    "Zero Secret Exposure: Never log, commit, or return secrets, keys, or credentials.",
+    "Deterministic Boundaries: Never treat prompt instructions alone as the sole security barrier.",
+    "Least Privilege: Limit tool permissions to minimum required operational scope.",
+    "Explicit Approval: High-blast-radius or irreversible actions require explicit user authorization."
+  ],
+  "blockedOperations": [
+    {
+      "id": "block-root-deletion",
+      "pattern": "rm\\s+-rf\\s+[\\/\\\\]|Remove-Item\\s+-Recurse\\s+['\"]?[A-Za-z]:[\\/\\\\]",
+      "reason": "Root or drive directory deletion is strictly blocked"
+    },
+    {
+      "id": "block-disk-format",
+      "pattern": "format\\s+[a-z]:",
+      "reason": "Disk format commands are strictly blocked"
+    },
+    {
+      "id": "block-drop-database",
+      "pattern": "drop\\s+database",
+      "reason": "Raw database drop operations are strictly blocked outside controlled migrations"
+    },
+    {
+      "id": "block-git-force-push",
+      "pattern": "git\\s+push.*(?:--force|-f\\b)",
+      "reason": "Git force push to remote branches is strictly blocked"
+    },
+    {
+      "id": "block-git-clean-fdx",
+      "pattern": "git\\s+clean\\s+(?:-[a-z]*f[a-z]*d|-[a-z]*d[a-z]*f)",
+      "reason": "Indiscriminate deletion of untracked files without confirmation is blocked"
+    },
+    {
+      "id": "block-secret-file-display",
+      "pattern": "(?:cat|type|more|Get-Content|head|tail)\\s+[^\\n]*(?:\\.env|id_rsa|id_ed25519|\\.pem|\\.key)\\b",
+      "reason": "Direct console display of secret and credential files is blocked"
+    }
+  ],
+  "approvalRequiredOperations": [
+    {
+      "id": "ask-git-hard-reset",
+      "pattern": "git\\s+reset\\s+--hard",
+      "reason": "Hard git reset discards uncommitted work and requires explicit approval"
+    },
+    {
+      "id": "ask-package-publish",
+      "pattern": "(?:npm|pnpm|yarn)\\s+publish|twine\\s+upload",
+      "reason": "Package publishing impacts external registries and requires explicit approval"
+    },
+    {
+      "id": "ask-docker-prune",
+      "pattern": "docker\\s+system\\s+prune",
+      "reason": "Docker prune clears local containers/images and requires explicit approval"
+    },
+    {
+      "id": "ask-production-deploy",
+      "pattern": "(?:terraform|pulumi|serverless|cdk)\\s+(?:apply|deploy)",
+      "reason": "Production cloud infrastructure deployment requires explicit approval"
+    }
+  ],
+  "secretProtection": {
+    "protectedPatterns": [
+      ".env*",
+      "**/*.pem",
+      "**/*.key",
+      "**/*_rsa",
+      "**/*_ed25519",
+      "**/*.pfx",
+      "**/*.p12"
+    ],
+    "redactionRules": [
+      "JWT secrets, private keys, database passwords, and API tokens must never appear in commit messages, logs, or agent conversation history."
+    ]
+  },
+  "runtimeEnforcement": {
+    "antigravity": {
+      "mechanism": "PreToolUse lifecycle hook",
+      "entry": ".agents/hooks.json",
+      "enforcer": ".ai/scripts/security-hook.js"
+    },
+    "cursor": {
+      "mechanism": "Native command approval dialogs and terminal confirmation",
+      "enforcer": "Runtime approval controls + pre-execution policy checks"
+    },
+    "vscode": {
+      "mechanism": "GitHub Copilot terminal confirmation & workspace trust",
+      "enforcer": "Runtime approval controls + pre-execution policy checks"
+    },
+    "codex": {
+      "mechanism": "OpenAI Codex CLI execution sandboxing & approval flags",
+      "enforcer": "Codex sandbox policy + pre-execution policy checks"
+    },
+    "claude-code": {
+      "mechanism": "Claude Code command permissions & interactive confirmation",
+      "enforcer": "Runtime permission checks + pre-execution policy checks"
+    },
+    "gemini-cli": {
+      "mechanism": "Gemini CLI execution approval and tool confirmation",
+      "enforcer": "Runtime confirmation + pre-execution policy checks"
+    }
+  },
+  "fallbackBehavior": "When running in a runtime lacking deterministic pre-tool hooks, the agent must check proposed commands against this policy before execution, refusing blocked commands and explicitly requesting user confirmation for approval-required operations."
+}

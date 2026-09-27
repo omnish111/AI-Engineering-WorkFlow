@@ -1,6 +1,6 @@
 {
-  "version": "3.0",
-  "description": "Context routing manifest — maps task types and domains to canonical Antigravity skills and rules",
+  "version": "4.0",
+  "description": "Context routing manifest — maps task types and domains to canonical Agent Skills and rules",
   "contextGroups": {
     "core": {
       "description": "Always loaded for any task",
@@ -23,6 +23,13 @@
         ".agents/skills/implementing-frontend/SKILL.md",
         ".agents/rules/ui-guidelines.md",
         ".agents/rules/coding-rules.md"
+      ]
+    },
+    "uiux": {
+      "description": "UI/UX product experience and interaction design context",
+      "files": [
+        ".agents/skills/designing-ui-ux/SKILL.md",
+        ".agents/rules/ui-guidelines.md"
       ]
     },
     "database": {
@@ -108,7 +115,9 @@
     "planning": ["core", "planning"],
     "security-change": ["core", "security", "backend", "testing", "review"],
     "database-change": ["core", "database", "backend", "testing"],
-    "evaluation": ["core", "evaluation"]
+    "evaluation": ["core", "evaluation"],
+    "uiux-design": ["core", "uiux"],
+    "new-user-flow": ["core", "uiux", "frontend"]
   },
   "rules": [
     "Always load 'core' context group",

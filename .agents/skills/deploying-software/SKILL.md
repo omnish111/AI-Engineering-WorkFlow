@@ -46,5 +46,5 @@ Deploy Preparation
 - Pre-flight checklist 100% verified.
 
 # References
-- [Docker Compose Template](file:///e:/AI%20Engineering%20Workflow/.ai/templates/devops/docker-compose.yml.template)
-- [Checkpoint Policy](file:///e:/AI%20Engineering%20Workflow/.ai/orchestration/checkpoint-policy.json)
+- [Docker Compose Template](../../../.ai/templates/devops/docker-compose.yml.template)
+- [Checkpoint Policy](../../../.ai/orchestration/checkpoint-policy.json)

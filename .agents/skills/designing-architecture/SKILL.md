@@ -42,5 +42,5 @@ Architectural Decision Scope
 - Decision recorded in `.ai/state/decisions.json`.
 
 # References
-- [Architecture Rules](file:///e:/AI%20Engineering%20Workflow/.agents/rules/architecture-rules.md)
-- [Decisions State](file:///e:/AI%20Engineering%20Workflow/.ai/state/decisions.json)
+- [Architecture Rules](../../rules/architecture-rules.md)
+- [Decisions State](../../../.ai/state/decisions.json)

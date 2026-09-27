@@ -42,5 +42,5 @@ Outcome Evaluation
 - Evaluation run against actual runtime behavior, not mocked code.
 
 # References
-- [Evaluator Subagent](file:///e:/AI%20Engineering%20Workflow/.agents/agents/evaluator.md)
-- [Golden Task Evaluator](file:///e:/AI%20Engineering%20Workflow/.ai/scripts/eval-runner.js)
+- [Evaluator Subagent](../../agents/evaluator.md)
+- [Golden Task Evaluator](../../../.ai/scripts/eval-runner.js)

@@ -42,6 +42,6 @@ Review Code Diff
 - Code review report recorded with clear rationale for every finding.
 
 # References
-- [Reviewer Subagent](file:///e:/AI%20Engineering%20Workflow/.agents/agents/reviewer.md)
-- [Coding Rules](file:///e:/AI%20Engineering%20Workflow/.agents/rules/coding-rules.md)
-- [Architecture Rules](file:///e:/AI%20Engineering%20Workflow/.agents/rules/architecture-rules.md)
+- [Reviewer Subagent](../../agents/reviewer.md)
+- [Coding Rules](../../rules/coding-rules.md)
+- [Architecture Rules](../../rules/architecture-rules.md)

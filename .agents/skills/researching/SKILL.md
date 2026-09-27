@@ -38,4 +38,4 @@ Is the technical question already answered in repository conventions?
 - Recommendation fits within existing repository architecture without unnecessary dependencies.
 
 # References
-- [Decisions State](file:///e:/AI%20Engineering%20Workflow/.ai/state/decisions.json)
+- [Decisions State](../../../.ai/state/decisions.json)

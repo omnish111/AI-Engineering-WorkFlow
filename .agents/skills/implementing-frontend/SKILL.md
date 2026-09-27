@@ -7,13 +7,13 @@ description: Implements client-side interfaces, responsive UI components, user f
 Create responsive, accessible, aesthetic user interfaces with robust state management and defensive handling of all view states.
 
 # When to Use
-- Authoring or modifying React / Next.js components, pages, hooks, or client state stores.
-- Implementing UI flows, forms, data tables, modals, and design system elements.
+- Authoring or modifying frontend components, pages, hooks, client state stores, templates, or styles across the project's chosen stack.
+- Implementing UI flows, forms, data tables, modals, and design system elements according to approved UI/UX specifications.
 
 # Procedure
-1. **Component Design**:
-   - Decompose interface into small, reusable components with explicit prop interfaces.
-   - Use Tailwind CSS and shadcn/ui patterns for styling consistency.
+1. **Inspect & Decompose**:
+   - Inspect the target project's existing UI architecture, styling conventions (e.g. Tailwind CSS, CSS Modules, styled-components, design tokens, or vanilla CSS), and component patterns.
+   - Decompose interface into focused, reusable components with explicit typed prop contracts without imposing an unconfigured framework.
 2. **Handle Mandatory States**:
    - **Loading State**: Render skeleton screens or spinner indicators while fetching data.
    - **Empty State**: Provide informative copy and action button when lists or search results are empty.
@@ -39,4 +39,4 @@ Component Implementation
 - Component renders cleanly across viewport breakpoints.
 
 # References
-- [UI Guidelines](file:///e:/AI%20Engineering%20Workflow/.agents/rules/ui-guidelines.md)
+- [UI Guidelines](../../rules/ui-guidelines.md)

@@ -1,0 +1,50 @@
+{
+  "id": "codex",
+  "name": "OpenAI Codex CLI",
+  "version": "4.0.0",
+  "runtimeType": "cli",
+  "status": "supported",
+  "officialDocs": [
+    "https://developers.openai.com/api/docs/guides/tools-skills",
+    "https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra"
+  ],
+  "discovery": {
+    "constitution": "AGENTS.md",
+    "skills": ".agents/skills/",
+    "instructions": "AGENTS.md"
+  },
+  "instructions": {
+    "primary": "AGENTS.md"
+  },
+  "skillsMapping": {
+    "strategy": "direct",
+    "canonicalPath": ".agents/skills/"
+  },
+  "roles": {
+    "strategy": "main-agent-role-handoff",
+    "contractPath": ".agents/agents/",
+    "supportedRoles": [
+      "planner",
+      "implementer",
+      "verifier",
+      "evaluator",
+      "reviewer",
+      "security-reviewer",
+      "researcher"
+    ]
+  },
+  "safety": {
+    "strategy": "codex-sandbox-and-approval",
+    "policyPath": ".ai/policies/security-policy.json",
+    "sandboxDefault": true,
+    "approvalRequiredFlags": ["--ask", "--confirm"]
+  },
+  "execution": {
+    "supportsSubagents": false,
+    "supportsWorktrees": true,
+    "supportsMcp": false,
+    "supportsBrowser": false,
+    "supportsParallel": false,
+    "fallback": "Sequential execution with DAG state updates in .ai/state/tasks.json"
+  }
+}

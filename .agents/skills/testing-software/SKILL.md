@@ -40,5 +40,5 @@ Testing Strategy
 - Execution completes within acceptable duration limits.
 
 # References
-- [Coding Rules](file:///e:/AI%20Engineering%20Workflow/.agents/rules/coding-rules.md)
-- [Verifier Subagent](file:///e:/AI%20Engineering%20Workflow/.agents/agents/verifier.md)
+- [Coding Rules](../../rules/coding-rules.md)
+- [Verifier Subagent](../../agents/verifier.md)

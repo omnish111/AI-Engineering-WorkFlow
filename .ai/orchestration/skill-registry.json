@@ -1,6 +1,6 @@
 {
-  "version": "3.0",
-  "description": "AEW V3 Skill Registry — Canonical routing metadata for Agent Skills in .agents/skills",
+  "version": "4.0",
+  "description": "AEW V4 Skill Registry — Canonical routing metadata for Agent Skills in .agents/skills",
   "skills": {
     "analyzing-prd": {
       "path": ".agents/skills/analyzing-prd/SKILL.md",
@@ -25,6 +25,12 @@
       "description": "Define boundaries, interfaces, data flow, ADRs and trade-offs",
       "primaryDomain": "architecture",
       "roles": ["planner", "reviewer"]
+    },
+    "designing-ui-ux": {
+      "path": ".agents/skills/designing-ui-ux/SKILL.md",
+      "description": "Design user flows, information architecture, screen hierarchy, design tokens, interaction states, and accessibility",
+      "primaryDomain": "uiux",
+      "roles": ["planner", "implementer"]
     },
     "implementing-backend": {
       "path": ".agents/skills/implementing-backend/SKILL.md",

@@ -1,0 +1,18 @@
+---
+description: AI Engineering Workflow (AEW V4) core rules, lifecycle, and architecture
+globs: *
+alwaysApply: true
+---
+
+# Cursor Native Rule — AEW V4 Integration
+
+This workspace operates under the **AEW V4 Portable Multi-Runtime Engineering Harness**.
+
+## Core Directives
+
+1. **Constitution**: Follow [AGENTS.md](../../AGENTS.md) as the authoritative engineering standard.
+2. **Canonical Skills**: Load task skills on demand from `.agents/skills/`. Never duplicate skill bodies.
+3. **Architecture & Coding**: Adhere to persistent rules in `.agents/rules/` (`coding-rules.md`, `architecture-rules.md`, `ui-guidelines.md`, `security.md`).
+4. **Lifecycle**: Execute tasks using the 11-stage pipeline (Analyze -> Research when needed -> Architecture -> UI/UX when applicable -> Plan -> Implement -> Test -> Verify -> Evaluate -> Review -> Evidence).
+5. **State & Evidence**: Maintain machine-readable state in `.ai/state/tasks.json`. Never claim task completion without executable verification evidence.
+6. **Security Invariants**: Obey [.ai/policies/security-policy.json](../../.ai/policies/security-policy.json). Always ask before destructive actions.

@@ -173,14 +173,14 @@ log('\n═══ Additional: Structure Validation ═══', colors.bold + colo
     assert(fs.existsSync(fullPath), `File exists: ${path.basename(f)}`);
   }
 
-  // Check V3 canonical skills
+  // Check canonical skills (V4: 18 skills)
   const expectedSkills = [
     'analyzing-prd', 'planning', 'researching', 'designing-architecture',
-    'implementing-backend', 'implementing-frontend', 'designing-database',
-    'designing-apis', 'securing-applications', 'testing-software',
-    'debugging-software', 'verifying-changes', 'evaluating-results',
-    'reviewing-code', 'deploying-software', 'onboarding-projects',
-    'upgrading-projects'
+    'designing-ui-ux', 'implementing-backend', 'implementing-frontend',
+    'designing-database', 'designing-apis', 'securing-applications',
+    'testing-software', 'debugging-software', 'verifying-changes',
+    'evaluating-results', 'reviewing-code', 'deploying-software',
+    'onboarding-projects', 'upgrading-projects'
   ];
 
   for (const skill of expectedSkills) {

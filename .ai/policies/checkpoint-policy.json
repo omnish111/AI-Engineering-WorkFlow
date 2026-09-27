@@ -1,0 +1,62 @@
+{
+  "version": "4.0",
+  "description": "Portable human checkpoint policy — defines autonomous vs approval-required actions across all runtimes",
+  "autonomous": {
+    "description": "Actions the agent may perform autonomously within task contracts",
+    "actions": [
+      "Read any file in the repository",
+      "Edit source code files within the assigned task contract",
+      "Create new source code, test, and documentation files",
+      "Run formatters, linters, typecheckers, and safe local tests",
+      "Create feature branches and isolated git worktrees",
+      "Update state files (.ai/state/) and project telemetry",
+      "Install dependencies specified in task requirements",
+      "Run local development test fixtures or seeders",
+      "Create or modify environment template files (.env.example)"
+    ]
+  },
+  "askUserBefore": {
+    "description": "Actions requiring explicit user authorization before execution",
+    "actions": [
+      {
+        "action": "Destructive database actions (DROP, TRUNCATE, raw migrations on live databases)",
+        "reason": "Data loss risk",
+        "severity": "CRITICAL"
+      },
+      {
+        "action": "Production deployment and cloud provisioning (terraform apply, cdk deploy)",
+        "reason": "Production stability and operational cost",
+        "severity": "CRITICAL"
+      },
+      {
+        "action": "Displaying, committing, or modifying live secrets and credentials",
+        "reason": "Security vulnerability",
+        "severity": "CRITICAL"
+      },
+      {
+        "action": "Destructive filesystem operations (rm -rf /, format, git clean -fdx)",
+        "reason": "Irreversible data destruction",
+        "severity": "CRITICAL"
+      },
+      {
+        "action": "Payment and billing transaction processing logic modifications",
+        "reason": "Financial risk",
+        "severity": "HIGH"
+      },
+      {
+        "action": "Breaking public API contract changes without backward-compatibility deprecation",
+        "reason": "Downstream consumer breakage",
+        "severity": "HIGH"
+      },
+      {
+        "action": "Package publishing or public release artifact generation",
+        "reason": "External registry mutation",
+        "severity": "HIGH"
+      }
+    ]
+  },
+  "enforcement": {
+    "deterministicHooks": "If supported by the runtime (e.g. Antigravity PreToolUse, Cursor/Copilot confirmation, Claude Code permissions), wire deterministic interceptors.",
+    "agentGuard": "Main agent and subagents must check commands against this policy before dispatching."
+  }
+}

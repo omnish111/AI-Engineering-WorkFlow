@@ -43,5 +43,5 @@ Encountered Failure
 - Root cause documented clearly in task evidence.
 
 # References
-- [Testing Software Skill](file:///e:/AI%20Engineering%20Workflow/.agents/skills/testing-software/SKILL.md)
-- [Verifier Subagent](file:///e:/AI%20Engineering%20Workflow/.agents/agents/verifier.md)
+- [Testing Software Skill](../testing-software/SKILL.md)
+- [Verifier Subagent](../../agents/verifier.md)

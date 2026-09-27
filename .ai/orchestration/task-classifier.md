@@ -1,15 +1,16 @@
-# Multidimensional Task Classifier (V3)
+# Multidimensional Task Classifier (V4)
 
 ## Purpose
 
-Classify incoming engineering tasks across multiple dimensions (domain, activity, risk, scope, parallelizability) to activate the minimum high-signal subagents, skills, and model tiers. This eliminates single-bucket limitations and prevents unnecessary agent sprawl.
+Classify incoming engineering tasks across multiple dimensions (domain, activity, risk, scope, parallelizability) to activate the minimum high-signal roles, skills, and model tiers. This eliminates single-bucket limitations and prevents unnecessary harness sprawl.
 
 ## Classification Dimensions
 
 Each task is classified across five orthogonal dimensions:
 
 ### 1. Primary Domain
-- `frontend`: UI components, styling, client state, browser flows.
+- `frontend`: UI components, client-side rendering, styling, browser state.
+- `uiux`: User flows, information architecture, screen hierarchy, design tokens, interaction states, accessibility.
 - `backend`: Services, business logic, controllers, background workers.
 - `fullstack`: Coordinated backend and frontend changes.
 - `database`: Schemas, migrations, query optimization, indexes.
@@ -47,10 +48,11 @@ Each task is classified across five orthogonal dimensions:
 | Domain + Activity | Risk Level | Scope | Assigned Roles | Activated Skills | Model Tier |
 |-------------------|------------|-------|----------------|------------------|------------|
 | `frontend` + `implementation` (simple) | `low` | `isolated` | `implementer`, `verifier` | `implementing-frontend`, `verifying-changes` | `fast` |
+| `uiux` / `new-user-flow` + `implementation` | `standard` | `modular` | `planner`, `implementer`, `verifier` | `designing-ui-ux`, `implementing-frontend`, `verifying-changes` | `standard` |
 | `backend` + `implementation` | `standard` | `modular` | `planner`, `implementer`, `verifier`, `reviewer` | `planning`, `implementing-backend`, `testing-software`, `verifying-changes`, `reviewing-code` | `standard` |
 | `any` + `bugfix` | `standard` | `isolated`/`modular` | `debugger`, `implementer`, `verifier` | `debugging-software`, `testing-software`, `verifying-changes` | `standard` |
 | `security` + `any` | `critical` | `any` | `planner`, `implementer`, `verifier`, `security-reviewer` | `securing-applications`, `testing-software`, `verifying-changes` | `critical` |
-| `architecture` + `planning` | `high` | `cross-cutting` | `planner`, `architect` | `analyzing-prd`, `planning`, `designing-architecture` | `strong` |
+| `architecture` + `planning` | `high` | `cross-cutting` | `planner`, `reviewer` | `analyzing-prd`, `planning`, `designing-architecture` | `strong` |
 | `any` + `evaluation` | `standard` | `any` | `evaluator` | `evaluating-results` | `standard` |
 
 ---
@@ -61,26 +63,33 @@ Tasks stored in `.ai/state/tasks.json` include multidimensional metadata:
 
 ```json
 {
-  "id": "task-auth-001",
-  "description": "Implement password reset confirmation endpoint",
-  "metadata": {
-    "primaryDomain": "backend",
-    "activityType": "implementation",
-    "riskLevel": "critical",
+  "id": "task-ui-01",
+  "title": "Design and Implement Interactive Onboarding Flow",
+  "classification": {
+    "domain": "uiux",
+    "activity": "implementation",
+    "risk": "standard",
     "scope": "modular",
     "parallelizable": false
   },
-  "role": "implementer",
-  "skills": ["implementing-backend", "securing-applications", "verifying-changes"],
-  "modelTier": "critical",
-  "status": "READY",
+  "roles": ["planner", "implementer", "verifier"],
+  "skills": ["designing-ui-ux", "implementing-frontend", "verifying-changes"],
+  "modelTier": "standard",
+  "contextGroups": ["core", "uiux", "frontend"],
   "dependsOn": [],
-  "inputs": ["codebase/backend/src/auth/entities/user.entity.ts"],
-  "outputs": ["codebase/backend/src/auth/controllers/password-reset.controller.ts"],
+  "expectedOutputs": [
+    "src/components/onboarding/wizard.tsx",
+    "src/components/onboarding/step-indicator.tsx"
+  ],
   "acceptanceCriteria": [
-    "POST /auth/reset-password/confirm with valid token updates password",
-    "Single-use token constraint enforced",
-    "Weak passwords rejected with 400"
+    "Wizard renders 3 progressive onboarding steps with back/next actions",
+    "Loading, empty, and validation states are explicitly handled",
+    "Contrast ratios meet WCAG AA standards"
   ]
 }
 ```
+
+## Fallback & Non-Visual Rule
+
+- If a task has no visual or user experience impact (e.g. backend endpoint, DB migration, script update), the `designing-ui-ux` skill is **never** loaded.
+- If a task is a minor CSS fix or localized label edit, the task bypasses `designing-ui-ux` and routes directly to `implementing-frontend`.

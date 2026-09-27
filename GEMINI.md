@@ -1,16 +1,19 @@
-# Google Antigravity Configuration & Runtime Entry Point
+# Gemini / Antigravity Compatibility Entry Point
 
-This repository uses the native Google Antigravity runtime mechanisms for all engineering workflows.
+This file serves as a thin compatibility entry point for Google Antigravity IDE/CLI and Gemini CLI into the **AEW V4 Portable Multi-Runtime Engineering Harness**.
 
-## Antigravity Native Components
+## Portable Core Navigation
 
-1. **Constitution & Guidelines**: Read and adhere to [AGENTS.md](AGENTS.md).
-2. **Persistent Invariants & Constraints**: Located in `.agents/rules/` (`always_on`, `model_decision`, and `glob` triggers).
-3. **Execution Capabilities (Agent Skills)**: Located in `.agents/skills/` with canonical `SKILL.md` bundles using progressive disclosure.
-4. **Focused Subagents**: Located in `.agents/agents/` for delegated, isolated task execution.
-5. **Deterministic Safety Hooks**: Configured in `.agents/hooks.json` to prevent high-blast-radius actions.
-6. **AEW Control Plane**: State, routing policies, golden evals, and deterministic support scripts located in `.ai/`.
+- **Authoritative Constitution**: [AGENTS.md](AGENTS.md)
+- **Canonical Agent Skills**: `.agents/skills/` (18 portable Agent Skills)
+- **Persistent Invariants**: `.agents/rules/`
+- **Role Contracts**: `.agents/agents/`
+- **Portable Policies**: `.ai/policies/` (`security-policy.json`, `decision-policy.json`, `checkpoint-policy.json`)
+- **Durable State**: `.ai/state/`
+- **Runtime Adapter Details**: [.ai/adapters/antigravity/](.ai/adapters/antigravity/) and [.ai/adapters/gemini-cli/](.ai/adapters/gemini-cli/)
 
-## Runtime Discovery Notice
+## Native Mechanism Mapping
 
-Antigravity automatically discovers skills in `.agents/skills/`, subagents in `.agents/agents/`, rules in `.agents/rules/`, and lifecycle hooks in `.agents/hooks.json`. Do not maintain parallel duplicate instructions.
+- **Antigravity**: Discovers `.agents/skills`, `.agents/rules`, `.agents/agents`, and `.agents/hooks.json` natively.
+- **Gemini CLI**: Discovers `GEMINI.md` and loads canonical Agent Skills from `.agents/skills/`.
+- **Deterministic Hooks**: `.agents/hooks.json` forwards to `.ai/scripts/security-hook.js` enforcing `.ai/policies/security-policy.json`.

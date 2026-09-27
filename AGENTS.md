@@ -1,85 +1,122 @@
-# AI Engineering Workflow (AEW) V3 Constitution
+# AI Engineering Workflow (AEW) V4 Constitution
 
-An Antigravity-first, Skills-first AI engineering harness that transforms PRDs and requirements into verifiable software with minimal human overhead and zero compromise on safety.
+A portable, multi-runtime, Skills-first AI engineering harness that transforms PRDs and requirements into verifiable software across Antigravity, Cursor, VS Code + GitHub Copilot, Codex CLI, Claude Code, Gemini CLI, and compatible agent runtimes.
+
+---
 
 ## 1. Core Principles
 
-1. **Inspect Before Acting**: Establish current state, file structure, existing patterns, and conventions before making changes.
-2. **Smallest Coherent Change**: Prefer focused, minimal, high-signal changes. Avoid speculative abstractions, unnecessary dependencies, and gratuitous churn.
+1. **Inspect Before Acting**: Establish repository structure, files, conventions, and runtime capabilities before making changes.
+2. **Smallest Coherent Change**: Prefer focused, minimal, high-signal changes. Avoid speculative abstractions and gratuitous churn.
 3. **Preserve Working Functionality**: Zero regressions. Never break an existing working feature to add a new one.
-4. **Context As A Finite Resource**: Use progressive disclosure (metadata first, details on demand). Never dump raw repositories or giant transcripts into context.
+4. **Context As A Finite Resource**: Use progressive disclosure (metadata first, details on demand). Never dump entire repositories into context.
 5. **Separation of Concerns**:
-   - **Role** ("Who"): Custom subagents defined in `.agents/agents/`.
-   - **Capability** ("How"): Agent Skills defined in `.agents/skills/`.
-   - **Constraint** ("Invariants"): Rules defined in `.agents/rules/`.
-   - **Control Plane**: State, routing, evals, and support tools in `.ai/`.
+   - **Role** ("Who"): Portable role contracts in `.agents/agents/` (with runtime-native wrappers where supported).
+   - **Capability** ("How"): 18 canonical Agent Skills in `.agents/skills/`.
+   - **Constraint** ("Invariants"): Rules in `.agents/rules/`.
+   - **Policy** ("Allowed"): Portable policies in `.ai/policies/`.
+   - **State** ("History"): Machine-readable state in `.ai/state/`.
+   - **Adapters** ("Platform"): Thin runtime adapters in `.ai/adapters/`.
+
+---
 
 ## 2. Source of Truth Hierarchy
 
 Priority (highest to lowest):
-1. **Safety & Security Invariants**: Hard limits in `.agents/rules/security.md` and `.agents/hooks.json`.
+1. **Safety & Security Invariants**: `.ai/policies/security-policy.json`, `.agents/rules/security.md`, and runtime security controls.
 2. **Human Intent**: Explicit user instructions and approved PRDs.
 3. **Repository Constitution**: `AGENTS.md`.
 4. **Persistent Workspace Rules**: `.agents/rules/*.md`.
-5. **Runtime Capabilities**: `.agents/skills/*/SKILL.md`.
+5. **Canonical Agent Skills**: `.agents/skills/*/SKILL.md`.
 6. **Machine-Readable State**: `.ai/state/` (`project.json`, `tasks.json`, `decisions.json`, `blockers.json`, `events.jsonl`).
-7. **Control Plane Policies**: `.ai/orchestration/`.
+7. **Control Plane Policies & Adapters**: `.ai/policies/`, `.ai/orchestration/`, `.ai/adapters/`.
+
+---
 
 ## 3. Decision & Autonomy Policy
 
-| Situation | Action |
-|-----------|--------|
-| **Known from PRD/Code** | Act immediately without prompting. |
-| **High-Confidence Inference** | Infer, execute, and record rationale in `.ai/state/decisions.json`. |
-| **Uncertain but Researchable** | Research first; record findings and proceed. |
-| **Genuinely Ambiguous Requirement** | Formulate concise options with pros/cons and prompt user. |
-| **Destructive / Irreversible Action** | Require explicit user approval before execution. |
-| **Credentials / Secrets / Production Impact** | Require explicit approval plus runtime hook controls. |
-| **Security / Payment / Data Risks** | Engage security-reviewer subagent and require stronger verification. |
+| Situation | Action | Rationale Location |
+|-----------|--------|--------------------|
+| **Known from PRD / Code** | Act immediately without prompting. | Self-evident in code/docs. |
+| **High-Confidence Inference** (>= 0.85) | Infer, execute, and record. | Log in `.ai/state/decisions.json`. |
+| **Uncertain but Researchable** | Research first using native tools. | Log findings in `.ai/state/decisions.json`. |
+| **Genuinely Ambiguous Requirement** | Formulate concise numbered options with trade-offs. | Prompt user before implementation. |
+| **Destructive / Irreversible Action** | Block or require explicit user confirmation. | Governed by `.ai/policies/security-policy.json`. |
+| **Credentials / Secrets Exposure** | Strictly prohibited; require user-managed environment. | `.ai/policies/security-policy.json`. |
+| **Security / Financial / Auth Changes** | Engage security-reviewer role; enforce verification. | Mandatory security evaluation. |
 
-## 4. Execution Lifecycle
+---
+
+## 4. Runtime-Neutral Engineering Lifecycle
 
 ```
 PRD / Request
   │
   ▼
-Analyze Requirements ──[Ambiguous?]──► Ask User
+Inspect Project & Runtime Capabilities
   │
   ▼
-Research If Needed ──► Record Findings
+Analyze Requirements (analyzing-prd) ──[Ambiguous?]──► Ask User
   │
   ▼
-Architecture & Task Plan ──► Task Contracts & Dependency DAG
+Research When Necessary (researching)
   │
   ▼
-Execute Skills & Focused Subagents (Parallel when safe & isolated)
+Architecture (designing-architecture)
+  │
+  ├── [UI/UX Materially Affected?] ──► designing-ui-ux
+  │
+  ▼
+Plan + Task Contracts + DAG (planning)
+  │
+  ▼
+Execute Tasks (implementing-backend, implementing-frontend, etc.)
+  │   (Parallel when safe & disjoint; sequential fallback otherwise)
   │
   ▼
 Integrate Changes
   │
   ▼
-Verification (Build, Typecheck, Lint, Unit/Integration/E2E/Browser)
+Verify (verifying-changes, testing-software: build, typecheck, lint, tests)
   │
   ▼
-Independent Evaluation (Validate actual outcome against user journey)
+Evaluate (evaluating-results: independent acceptance & user journey check)
   │
   ▼
-Review & Security Review (When complexity or risk warrants)
+Review & Security Review (reviewing-code, securing-applications)
+  │
+  ├── [Failure / Regression?] ──► debugging-software ──► Re-verify
   │
   ▼
-Final Evidence & State Update ──► Complete
+Final Evidence & State Synchronization ──► Complete
 ```
+
+---
 
 ## 5. Verification vs. Evaluation vs. Review
 
-- **Verification** (`verifier`): Did the engineering checks pass? (Build, compile, tests, lint, typecheck, runtime checks).
-- **Evaluation** (`evaluator`): Did the requested outcome actually work from the user's perspective? (Independent validation against acceptance criteria and functional goals).
+- **Verification** (`verifier`): Did the engineering checks pass? (Build, typecheck, lint, automated unit/integration tests).
+- **Evaluation** (`evaluator`): Did the requested outcome actually work from the user's perspective? (Independent validation against acceptance criteria and functional journeys).
 - **Review** (`reviewer` / `security-reviewer`): Is the code maintainable, secure, and architecturally sound?
 
-Never claim completion without concrete verification and evaluation evidence.
+*Never claim completion without concrete verification and outcome evaluation evidence recorded in `.ai/state/tasks.json`.*
 
-## 6. Standalone Project Location Policy
+---
 
-Whenever creating a new software project, website, or application:
-1. Always confirm or use a user-designated location outside the `AI Engineering Workflow` harness directory.
-2. Stamp portable engineering DNA using `.ai/scripts/dna-stamper.js` so target projects remain 100% self-sufficient across any AI IDE.
+## 6. Official Runtime Adapter Navigation
+
+AEW V4 provides thin native adapters in `.ai/adapters/` utilizing each tool's officially documented discovery mechanisms:
+- **Antigravity IDE / CLI**: Native discovery of `AGENTS.md`/`GEMINI.md`, `.agents/skills`, `.agents/rules`, `.agents/agents`, and `.agents/hooks.json`.
+- **Cursor IDE / CLI**: Discovers `AGENTS.md`, `.agents/skills`, and `.cursor/rules/aew.mdc`.
+- **VS Code + GitHub Copilot**: Discovers `AGENTS.md`, `.agents/skills`, `.github/copilot-instructions.md`, and custom agents in `.github/agents/`.
+- **OpenAI Codex CLI**: Discovers `AGENTS.md` and `.agents/skills` with sandbox execution.
+- **Claude Code**: Discovers `CLAUDE.md` (forwarding to `AGENTS.md`), `.claude/rules/`, and `.agents/skills`.
+- **Gemini CLI**: Discovers `GEMINI.md` (forwarding to `AGENTS.md`) and `.agents/skills`.
+
+---
+
+## 7. Standalone Project Location Policy
+
+Whenever creating a new software project, application, or website:
+1. Always confirm or use a user-designated location outside this `AI Engineering Workflow` harness directory.
+2. Stamp portable engineering DNA using `node .ai/scripts/dna-stamper.js <targetDir> --runtimes all` so downstream projects remain 100% self-sufficient across any AI IDE or CLI.

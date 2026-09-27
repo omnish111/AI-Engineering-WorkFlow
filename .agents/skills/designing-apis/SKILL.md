@@ -55,5 +55,5 @@ API Design
 - OpenAPI/Swagger specifications compile without schema errors.
 
 # References
-- [Architecture Rules](file:///e:/AI%20Engineering%20Workflow/.agents/rules/architecture-rules.md)
-- [Coding Rules](file:///e:/AI%20Engineering%20Workflow/.agents/rules/coding-rules.md)
+- [Architecture Rules](../../rules/architecture-rules.md)
+- [Coding Rules](../../rules/coding-rules.md)

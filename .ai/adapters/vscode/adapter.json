@@ -1,0 +1,54 @@
+{
+  "id": "vscode",
+  "name": "VS Code + GitHub Copilot",
+  "version": "4.0.0",
+  "runtimeType": "ide",
+  "status": "supported",
+  "officialDocs": [
+    "https://code.visualstudio.com/docs/agent-customization/agent-skills",
+    "https://code.visualstudio.com/docs/agent-customization/custom-agents",
+    "https://code.visualstudio.com/docs/agent-customization/custom-instructions"
+  ],
+  "discovery": {
+    "constitution": "AGENTS.md",
+    "instructions": ".github/copilot-instructions.md",
+    "skills": [".agents/skills/", ".github/skills/"],
+    "customAgents": ".github/agents/"
+  },
+  "instructions": {
+    "primary": "AGENTS.md",
+    "entryPoint": ".github/copilot-instructions.md"
+  },
+  "skillsMapping": {
+    "strategy": "direct",
+    "canonicalPath": ".agents/skills/"
+  },
+  "roles": {
+    "strategy": "native-custom-agents",
+    "wrapperLocation": ".github/agents/",
+    "contractPath": ".agents/agents/",
+    "supportedAgents": [
+      "planner.agent.md",
+      "implementer.agent.md",
+      "verifier.agent.md",
+      "evaluator.agent.md",
+      "reviewer.agent.md",
+      "security-reviewer.agent.md",
+      "researcher.agent.md"
+    ]
+  },
+  "safety": {
+    "strategy": "workspace-trust-and-approval",
+    "policyPath": ".ai/policies/security-policy.json",
+    "terminalApproval": true,
+    "preExecutionPolicyCheck": true
+  },
+  "execution": {
+    "supportsSubagents": true,
+    "supportsWorktrees": false,
+    "supportsMcp": true,
+    "supportsBrowser": false,
+    "supportsParallel": false,
+    "fallback": "Execute via main chat agent if custom agents are not enabled in workspace"
+  }
+}

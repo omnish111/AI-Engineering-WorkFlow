@@ -1,0 +1,54 @@
+{
+  "id": "cursor",
+  "name": "Cursor IDE / CLI",
+  "version": "4.0.0",
+  "runtimeType": "ide-and-cli",
+  "status": "supported",
+  "officialDocs": [
+    "https://prod.cursor.com/docs/skills",
+    "https://prod.cursor.com/docs/cli/using"
+  ],
+  "discovery": {
+    "constitution": "AGENTS.md",
+    "skills": [".agents/skills/", ".cursor/skills/"],
+    "rules": [".cursor/rules/", ".cursorrules"],
+    "instructions": ["AGENTS.md", "CLAUDE.md"]
+  },
+  "instructions": {
+    "primary": "AGENTS.md",
+    "entryPoint": ".cursor/rules/aew.mdc"
+  },
+  "skillsMapping": {
+    "strategy": "direct",
+    "canonicalPath": ".agents/skills/",
+    "compatibilityLocation": ".cursor/skills/"
+  },
+  "roles": {
+    "strategy": "main-agent-role-handoff",
+    "nativeAgentMode": "cursor --agent",
+    "contractPath": ".agents/agents/",
+    "supportedRoles": [
+      "planner",
+      "implementer",
+      "verifier",
+      "evaluator",
+      "reviewer",
+      "security-reviewer",
+      "researcher"
+    ]
+  },
+  "safety": {
+    "strategy": "runtime-approval-and-sandbox",
+    "policyPath": ".ai/policies/security-policy.json",
+    "terminalApproval": true,
+    "preExecutionPolicyCheck": true
+  },
+  "execution": {
+    "supportsSubagents": false,
+    "supportsWorktrees": true,
+    "supportsMcp": true,
+    "supportsBrowser": false,
+    "supportsParallel": false,
+    "fallback": "Sequential execution with structured role handoffs and task DAG updates"
+  }
+}

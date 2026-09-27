@@ -1,8 +1,8 @@
 /**
- * dna-stamper.js
- * Stamps portable engineering DNA (.ai/, .agents/, AGENTS.md, GEMINI.md) into any target project directory.
- * Approach A: Full V2 Autonomous Project Engine.
- * Pure Node.js - Zero external npm dependencies.
+ * dna-stamper.js (AEW V4)
+ * Stamps portable engineering DNA (.ai/, .agents/, AGENTS.md, runtime adapters)
+ * into any target project directory across all supported AI runtimes.
+ * Pure Node.js - Zero external npm dependencies. Cross-platform.
  */
 
 const fs = require('fs');
@@ -11,12 +11,13 @@ const path = require('path');
 const FACTORY_ROOT = path.join(__dirname, '../..');
 const TEMPLATES_DIR = path.join(__dirname, '../templates/dna');
 
-// 19 Execution skills relevant to standalone web/SaaS projects
+// 18 Canonical Execution Skills (V4)
 const EXECUTION_SKILLS = [
   'analyzing-prd',
   'planning',
   'researching',
   'designing-architecture',
+  'designing-ui-ux',
   'implementing-backend',
   'implementing-frontend',
   'designing-database',
@@ -47,6 +48,17 @@ const PROJECT_SCRIPTS = [
   'security-hook.js'
 ];
 
+// Portable policies
+const PORTABLE_POLICIES = [
+  'security-policy.json',
+  'decision-policy.json',
+  'checkpoint-policy.json',
+  'parallel-policy.md',
+  'worktree-policy.md'
+];
+
+const ALL_RUNTIMES = ['antigravity', 'cursor', 'vscode', 'codex', 'claude-code', 'gemini-cli'];
+
 function stampDNA(targetDir, options = {}) {
   if (!fs.existsSync(targetDir)) {
     throw new Error(`Target directory does not exist: ${targetDir}`);
@@ -57,25 +69,65 @@ function stampDNA(targetDir, options = {}) {
   const projectId = options.projectId || projectName.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
   const now = new Date().toISOString();
 
-  // Create required directory structure in target project
-  const dirs = [
-    path.join(resolvedTarget, '.ai'),
-    path.join(resolvedTarget, '.ai', 'context'),
-    path.join(resolvedTarget, '.ai', 'state'),
-    path.join(resolvedTarget, '.ai', 'research'),
-    path.join(resolvedTarget, '.ai', 'improvements'),
-    path.join(resolvedTarget, '.ai', 'agents'),
-    path.join(resolvedTarget, '.ai', 'orchestration'),
-    path.join(resolvedTarget, '.ai', 'scripts'),
-    path.join(resolvedTarget, '.ai', 'skills'),
-    path.join(resolvedTarget, '.agents'),
-    path.join(resolvedTarget, '.agents', 'rules'),
-    path.join(resolvedTarget, '.agents', 'skills')
-  ];
+  const runtimesArg = options.runtimes || 'all';
+  const selectedRuntimes = runtimesArg === 'all'
+    ? ALL_RUNTIMES
+    : runtimesArg.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
 
-  for (const dir of dirs) {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+  const createdFiles = [];
+  const updatedFiles = [];
+  const preservedFiles = [];
+
+  function safeWrite(filePath, content, isForce = options.force) {
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+    const relPath = path.relative(resolvedTarget, filePath).replace(/\\/g, '/');
+    if (fs.existsSync(filePath)) {
+      if (isForce) {
+        fs.writeFileSync(filePath, content, 'utf8');
+        updatedFiles.push(relPath);
+      } else {
+        preservedFiles.push(relPath);
+      }
+    } else {
+      fs.writeFileSync(filePath, content, 'utf8');
+      createdFiles.push(relPath);
+    }
+  }
+
+  function safeCopy(srcPath, destPath, isForce = options.force) {
+    if (!fs.existsSync(srcPath)) return;
+    const dir = path.dirname(destPath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+    const relPath = path.relative(resolvedTarget, destPath).replace(/\\/g, '/');
+    if (fs.existsSync(destPath)) {
+      if (isForce) {
+        fs.copyFileSync(srcPath, destPath);
+        updatedFiles.push(relPath);
+      } else {
+        preservedFiles.push(relPath);
+      }
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+      createdFiles.push(relPath);
+    }
+  }
+
+  function safeCopyDir(srcDir, destDir, isForce = options.force) {
+    if (!fs.existsSync(srcDir)) return;
+    if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
+
+    const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+    for (const entry of entries) {
+      const srcEntry = path.join(srcDir, entry.name);
+      const destEntry = path.join(destDir, entry.name);
+      if (entry.isDirectory()) {
+        safeCopyDir(srcEntry, destEntry, isForce);
+      } else {
+        safeCopy(srcEntry, destEntry, isForce);
+      }
     }
   }
 
@@ -85,251 +137,250 @@ function stampDNA(targetDir, options = {}) {
     '{{PROJECT_ID}}': projectId,
     '{{PROJECT_DESCRIPTION}}': options.description || `${projectName} application`,
     '{{PROJECT_DOMAIN}}': options.domain || 'General SaaS Application',
-    '{{PROJECT_MODE}}': options.mode || 'Onboarded',
-    '{{TECH_STACK_SUMMARY}}': options.techStackSummary || `${options.framework || 'Node.js'} / ${options.language || 'TypeScript'} / ${options.styling || 'CSS'}`,
+    '{{PROJECT_MODE}}': options.mode || 'Created',
+    '{{TECH_STACK_SUMMARY}}': options.techStackSummary || `${options.framework || 'Node.js'} / ${options.language || 'TypeScript'}`,
     '{{FRAMEWORK}}': options.framework || 'Node.js',
     '{{LANGUAGE}}': options.language || 'TypeScript',
-    '{{STYLING}}': options.styling || 'Tailwind CSS',
+    '{{STYLING}}': options.styling || 'CSS',
     '{{DATABASE}}': options.database || 'MongoDB',
     '{{ORM}}': options.orm || 'Mongoose',
-    '{{API_PATTERN}}': options.apiPattern || 'REST / Next.js Server Handlers',
+    '{{API_PATTERN}}': options.apiPattern || 'REST Handlers',
     '{{PACKAGE_MANAGER}}': options.packageManager || 'npm',
     '{{DEV_COMMAND}}': options.devCommand || 'npm run dev',
     '{{BUILD_COMMAND}}': options.buildCommand || 'npm run build',
     '{{TEST_COMMAND}}': options.testCommand || 'npm test',
     '{{LINT_COMMAND}}': options.lintCommand || 'npm run lint',
-    '{{DEV_PORT}}': options.devPort || '3000',
     '{{CREATED_AT}}': options.createdAt || now,
-    '{{LAST_UPDATED}}': now,
-    '{{ARCHITECTURE_STYLE}}': options.architectureStyle || 'Modular Decoupled Component Architecture',
-    '{{DEPLOYMENT_MODEL}}': options.deploymentModel || 'Containerized / Cloud Host (Vercel, Docker)',
-    '{{COMPONENT_BOUNDARIES}}': options.componentBoundaries || '- `src/components/` or `app/components/`: Reusable presentation UI\n- `src/lib/` or `app/api/`: Domain business logic and services\n- `models/`: Database schemas and persistence entities',
-    '{{CLIENT_STATE_PATTERN}}': options.clientStatePattern || 'React State / Context API / URL query params',
-    '{{SERVER_COMMUNICATION_PATTERN}}': options.serverCommunicationPattern || 'Async fetch / React Server Actions / REST endpoints',
-    '{{PERSISTENCE_PATTERN}}': options.persistencePattern || `${options.database || 'MongoDB'} managed via ${options.orm || 'Mongoose'}`,
-    '{{API_BASE_PATHS}}': options.apiBasePaths || '/api/*',
-    '{{AUTH_STRATEGY}}': options.authStrategy || 'Session / Token-based auth',
-    '{{COMPONENT_NAMING}}': options.componentNaming || 'PascalCase.tsx',
-    '{{TOTAL_FILES}}': options.fileCount || 0,
-    '{{TOTAL_LOC}}': options.totalLoc || 0,
-    '{{MODULES_LIST}}': JSON.stringify(options.modules || ['core', 'ui', 'api']),
-    '{{PENDING_IMPROVEMENTS_COUNT}}': options.pendingImprovementsCount || 0,
-    '{{DIRECTORY_STRUCTURE}}': options.directoryStructure || 'src/\n├── components/\n├── pages/ or app/\n└── lib/'
+    '{{LAST_UPDATED}}': now
   };
 
   function interpolate(content) {
-    let result = content;
-    for (const [key, value] of Object.entries(replacements)) {
-      result = result.split(key).join(value);
+    let res = content;
+    for (const [key, val] of Object.entries(replacements)) {
+      res = res.split(key).join(String(val));
     }
-    return result;
+    return res;
   }
 
-  const generatedFiles = [];
-
-  // 1. Root AGENTS.md
-  const agentsPath = path.join(resolvedTarget, 'AGENTS.md');
+  // 1. Portable Core Constitution (AGENTS.md)
   const agentsTmpl = path.join(TEMPLATES_DIR, 'AGENTS.md.template');
-  if (fs.existsSync(agentsTmpl) && (!fs.existsSync(agentsPath) || options.force)) {
-    fs.writeFileSync(agentsPath, interpolate(fs.readFileSync(agentsTmpl, 'utf8')), 'utf8');
-    generatedFiles.push('AGENTS.md');
+  const targetAgentsMd = path.join(resolvedTarget, 'AGENTS.md');
+  if (fs.existsSync(agentsTmpl)) {
+    const raw = fs.readFileSync(agentsTmpl, 'utf8');
+    safeWrite(targetAgentsMd, interpolate(raw));
+  } else {
+    // Fall back to factory AGENTS.md
+    safeCopy(path.join(FACTORY_ROOT, 'AGENTS.md'), targetAgentsMd);
   }
 
-  // 2. Root GEMINI.md
-  const geminiPath = path.join(resolvedTarget, 'GEMINI.md');
-  const geminiTmpl = path.join(TEMPLATES_DIR, 'GEMINI.md.template');
-  if (fs.existsSync(geminiTmpl) && (!fs.existsSync(geminiPath) || options.force)) {
-    fs.writeFileSync(geminiPath, interpolate(fs.readFileSync(geminiTmpl, 'utf8')), 'utf8');
-    generatedFiles.push('GEMINI.md');
-  }
-
-  // 3. .ai/settings.json
-  const settingsPath = path.join(resolvedTarget, '.ai', 'settings.json');
-  const settingsTmpl = path.join(TEMPLATES_DIR, 'settings.json.template');
-  if (fs.existsSync(settingsTmpl) && (!fs.existsSync(settingsPath) || options.force)) {
-    fs.writeFileSync(settingsPath, interpolate(fs.readFileSync(settingsTmpl, 'utf8')), 'utf8');
-    generatedFiles.push('.ai/settings.json');
-  }
-
-  // 4. .ai/context/architecture.md (Project-specific architecture overview)
-  const archPath = path.join(resolvedTarget, '.ai', 'context', 'architecture.md');
-  const archTmpl = path.join(TEMPLATES_DIR, 'context-architecture.md.template');
-  if (fs.existsSync(archTmpl) && (!fs.existsSync(archPath) || options.force)) {
-    fs.writeFileSync(archPath, interpolate(fs.readFileSync(archTmpl, 'utf8')), 'utf8');
-    generatedFiles.push('.ai/context/architecture.md');
-  }
-
-  // 5. Complete, authoritative context files from Factory
-  // Deep-copies coding-rules.md (155 lines), ui-guidelines.md (195 lines),
-  // architecture-rules.md (142 lines), naming-rules.md, and tech-stack.md
-  // Ensures target projects receive 100% of the factory's quality rules.
-  const coreContextFiles = [
-    'coding-rules.md',
-    'ui-guidelines.md',
-    'architecture-rules.md',
-    'naming-rules.md',
-    'tech-stack.md'
-  ];
-  for (const cFile of coreContextFiles) {
-    const srcCFile = path.join(FACTORY_ROOT, '.ai', 'context', cFile);
-    const destCFile = path.join(resolvedTarget, '.ai', 'context', cFile);
-    if (fs.existsSync(srcCFile) && (!fs.existsSync(destCFile) || options.force)) {
-      fs.copyFileSync(srcCFile, destCFile);
-      generatedFiles.push(`.ai/context/${cFile}`);
-    }
-  }
-
-  // 7. .ai/state/project.json
-  const projectPath = path.join(resolvedTarget, '.ai', 'state', 'project.json');
-  const projectTmpl = path.join(TEMPLATES_DIR, 'project.json.template');
-  if (fs.existsSync(projectTmpl) && (!fs.existsSync(projectPath) || options.force)) {
-    fs.writeFileSync(projectPath, interpolate(fs.readFileSync(projectTmpl, 'utf8')), 'utf8');
-    generatedFiles.push('.ai/state/project.json');
-  }
-
-  // 8. Initial decisions.json
-  const decisionsPath = path.join(resolvedTarget, '.ai', 'state', 'decisions.json');
-  if (!fs.existsSync(decisionsPath)) {
-    fs.writeFileSync(decisionsPath, JSON.stringify([
-      {
-        id: "DEC-001",
-        title: "Engineering DNA Embedded",
-        status: "ACCEPTED",
-        decision: `Initialized standalone engineering DNA into ${projectName}`,
-        timestamp: now
-      }
-    ], null, 2), 'utf8');
-    generatedFiles.push('.ai/state/decisions.json');
-  }
-
-  // 8.1 Initial tasks.json (Task DAG)
-  const tasksPath = path.join(resolvedTarget, '.ai', 'state', 'tasks.json');
-  if (!fs.existsSync(tasksPath)) {
-    fs.writeFileSync(tasksPath, JSON.stringify({
-      version: "2.0",
+  // 2. Machine-Readable State (.ai/state/)
+  const stateFiles = {
+    'project.json': {
+      id: projectId,
+      name: projectName,
+      description: options.description || `${projectName} application`,
+      status: "active",
+      architectureVersion: "v4-portable-runtime",
+      createdAt: now,
+      updatedAt: now
+    },
+    'tasks.json': {
+      version: "4.0",
       project: projectName,
       description: `Task dependency graph (DAG) for ${projectName}`,
       tasks: []
-    }, null, 2), 'utf8');
-    generatedFiles.push('.ai/state/tasks.json');
+    },
+    'decisions.json': {
+      version: "4.0",
+      decisions: []
+    },
+    'blockers.json': {
+      version: "4.0",
+      blockers: []
+    }
+  };
+
+  for (const [sFile, sData] of Object.entries(stateFiles)) {
+    const sPath = path.join(resolvedTarget, '.ai', 'state', sFile);
+    safeWrite(sPath, JSON.stringify(sData, null, 2));
   }
 
-  // 8.2 Templates (strategic-research-template.md)
-  const targetTemplatesDir = path.join(resolvedTarget, '.ai', 'templates');
-  if (!fs.existsSync(targetTemplatesDir)) {
-    fs.mkdirSync(targetTemplatesDir, { recursive: true });
-  }
-  const srcResearchTmpl = path.join(TEMPLATES_DIR, '..', 'strategic-research-template.md');
-  const destResearchTmpl = path.join(targetTemplatesDir, 'strategic-research-template.md');
-  if (fs.existsSync(srcResearchTmpl) && !fs.existsSync(destResearchTmpl)) {
-    fs.copyFileSync(srcResearchTmpl, destResearchTmpl);
-    generatedFiles.push('.ai/templates/strategic-research-template.md');
+  // Append-only events.jsonl
+  const eventsPath = path.join(resolvedTarget, '.ai', 'state', 'events.jsonl');
+  if (!fs.existsSync(eventsPath)) {
+    safeWrite(eventsPath, JSON.stringify({
+      id: `evt-${Date.now()}-init`,
+      timestamp: now,
+      type: "PROJECT_INITIALIZED",
+      payload: { projectId, projectName, runtimes: selectedRuntimes }
+    }) + '\n');
   }
 
-  // 9. Canonical Execution Skills (.agents/skills/)
+  // 3. Settings (.ai/settings.json)
+  const settingsPath = path.join(resolvedTarget, '.ai', 'settings.json');
+  safeWrite(settingsPath, JSON.stringify({
+    version: "4.0.0",
+    architectureVersion: "v4-portable-runtime",
+    project: {
+      name: projectName,
+      id: projectId,
+      status: "active"
+    },
+    orchestration: {
+      model: "capability-tier",
+      skillRegistry: "orchestration/skill-registry.json",
+      roleRegistry: "orchestration/role-registry.json",
+      modelRouting: "orchestration/model-routing.json",
+      taskClassifier: "orchestration/task-classifier.md",
+      decisionPolicy: "policies/decision-policy.json",
+      contextManifest: "orchestration/context-manifest.json",
+      checkpointPolicy: "policies/checkpoint-policy.json",
+      verificationSchema: "orchestration/verification-schema.json",
+      parallelPolicy: "policies/parallel-policy.md",
+      securityPolicy: "policies/security-policy.json"
+    },
+    workflow: {
+      model: "task-dag",
+      taskGraph: "state/tasks.json",
+      taskGraphScript: "scripts/task-graph.js"
+    },
+    paths: {
+      rules: ".agents/rules",
+      skills: ".agents/skills",
+      agents: ".agents/agents",
+      hooks: ".agents/hooks.json",
+      orchestration: ".ai/orchestration",
+      policies: ".ai/policies",
+      adapters: ".ai/adapters",
+      state: ".ai/state",
+      evaluations: "evals/golden-tasks",
+      scripts: ".ai/scripts"
+    }
+  }, null, 2));
+
+  // 4. Portable Policies (.ai/policies/)
+  for (const pol of PORTABLE_POLICIES) {
+    const srcPolicy = path.join(FACTORY_ROOT, '.ai', 'policies', pol);
+    const destPolicy = path.join(resolvedTarget, '.ai', 'policies', pol);
+    safeCopy(srcPolicy, destPolicy);
+  }
+
+  // 5. Canonical Execution Skills (.agents/skills/) - all 18 skills
   for (const skill of EXECUTION_SKILLS) {
     const srcSkillDir = path.join(FACTORY_ROOT, '.agents', 'skills', skill);
     const destSkillDir = path.join(resolvedTarget, '.agents', 'skills', skill);
-    if (fs.existsSync(srcSkillDir)) {
-      fs.cpSync(srcSkillDir, destSkillDir, { recursive: true });
-      generatedFiles.push(`.agents/skills/${skill}`);
-    }
+    safeCopyDir(srcSkillDir, destSkillDir);
   }
 
-  // 10. Native Invariant Rules (.agents/rules/)
+  // 6. Native Invariant Rules (.agents/rules/)
   const srcRulesDir = path.join(FACTORY_ROOT, '.agents', 'rules');
   const destRulesDir = path.join(resolvedTarget, '.agents', 'rules');
-  if (fs.existsSync(srcRulesDir)) {
-    if (!fs.existsSync(destRulesDir)) fs.mkdirSync(destRulesDir, { recursive: true });
-    const rules = fs.readdirSync(srcRulesDir).filter(f => f.endsWith('.md'));
-    for (const rule of rules) {
-      fs.copyFileSync(path.join(srcRulesDir, rule), path.join(destRulesDir, rule));
-      generatedFiles.push(`.agents/rules/${rule}`);
-    }
-  }
+  safeCopyDir(srcRulesDir, destRulesDir);
 
-  // 11. Custom Antigravity Subagents (.agents/agents/)
+  // 7. Portable Role Contracts (.agents/agents/)
   const srcAgentsDir = path.join(FACTORY_ROOT, '.agents', 'agents');
   const destAgentsDir = path.join(resolvedTarget, '.agents', 'agents');
-  if (fs.existsSync(srcAgentsDir)) {
-    if (!fs.existsSync(destAgentsDir)) fs.mkdirSync(destAgentsDir, { recursive: true });
-    const agents = fs.readdirSync(srcAgentsDir).filter(f => f.endsWith('.md'));
-    for (const agent of agents) {
-      fs.copyFileSync(path.join(srcAgentsDir, agent), path.join(destAgentsDir, agent));
-      generatedFiles.push(`.agents/agents/${agent}`);
-    }
-  }
+  safeCopyDir(srcAgentsDir, destAgentsDir);
 
-  // 12. Deterministic Safety Hooks (.agents/hooks.json & security-hook.js)
-  const hookJson = path.join(FACTORY_ROOT, '.agents', 'hooks.json');
-  const hookShim = path.join(FACTORY_ROOT, '.agents', 'security-hook.js');
-  if (fs.existsSync(hookJson)) {
-    fs.copyFileSync(hookJson, path.join(resolvedTarget, '.agents', 'hooks.json'));
-    generatedFiles.push('.agents/hooks.json');
-  }
-  if (fs.existsSync(hookShim)) {
-    fs.copyFileSync(hookShim, path.join(resolvedTarget, '.agents', 'security-hook.js'));
-    generatedFiles.push('.agents/security-hook.js');
-  }
-
-  // Quality Invariants rule (Zero-Silly-Bugs Standard)
-  const qualityRulePath = path.join(resolvedTarget, '.agents', 'rules', 'quality-invariants.md');
-  if (!fs.existsSync(qualityRulePath) || options.force) {
-    const qualityContent = `# Universal Quality Invariants (Zero-Silly-Bugs Standard)
-
-1. **The "Common Sense" Sanity Invariant**:
-   - Before outputting code, verify: Would a competent human deliver this?
-   - Never produce invisible/unreadable UI (unpaired text and background colors, broken dark mode, overlapping text).
-   - Never produce inaccurate logic or math (floating-point money errors, off-by-one errors).
-   - Never write code with obvious runtime crashes (undefined property access, broken imports).
-
-2. **Preserve Working Functionality (Zero Regressions)**:
-   - Never break existing working features when adding or refactoring code.
-   - Always inspect surrounding code and styles before modifying components or endpoints.
-
-3. **Defensive Engineering by Default**:
-   - Always handle the 3 fundamental states: Loading, Empty, and Error.
-   - Never assume API data always exists; guard with safe checks (\`data?.items ?? []\`).
-   - Validate inputs at system boundaries (forms, API payloads, route params).
-
-4. **Self-Review Before Declaring Done**:
-   - Mentally walk through the execution path from the user's perspective.
-   - Verify that all changes compile, types are sound, and tests/build checks pass.
-`;
-    fs.writeFileSync(qualityRulePath, qualityContent, 'utf8');
-    generatedFiles.push('.agents/rules/quality-invariants.md');
-  }
-
-  // 11. Agent Personas (.ai/agents/)
-  const agentsSrcDir = path.join(FACTORY_ROOT, '.ai', 'agents');
-  const agentsDestDir = path.join(resolvedTarget, '.ai', 'agents');
-  if (fs.existsSync(agentsSrcDir)) {
-    fs.cpSync(agentsSrcDir, agentsDestDir, { recursive: true });
-    generatedFiles.push('.ai/agents/');
-  }
-
-  // 12. Orchestration & Worktree policies (.ai/orchestration/)
+  // 8. Control Plane Orchestration (.ai/orchestration/)
   const orchSrcDir = path.join(FACTORY_ROOT, '.ai', 'orchestration');
   const orchDestDir = path.join(resolvedTarget, '.ai', 'orchestration');
-  if (fs.existsSync(orchSrcDir)) {
-    fs.cpSync(orchSrcDir, orchDestDir, { recursive: true });
-    generatedFiles.push('.ai/orchestration/');
-  }
+  safeCopyDir(orchSrcDir, orchDestDir);
 
-  // 13. Project Runtime Scripts (.ai/scripts/)
+  // 9. Project Runtime Scripts (.ai/scripts/)
   for (const script of PROJECT_SCRIPTS) {
     const srcScript = path.join(FACTORY_ROOT, '.ai', 'scripts', script);
     const destScript = path.join(resolvedTarget, '.ai', 'scripts', script);
-    if (fs.existsSync(srcScript)) {
-      fs.copyFileSync(srcScript, destScript);
-      generatedFiles.push(`.ai/scripts/${script}`);
+    safeCopy(srcScript, destScript);
+  }
+
+  // 10. Selected Runtime Adapters
+  for (const rt of selectedRuntimes) {
+    const adapterSrc = path.join(FACTORY_ROOT, '.ai', 'adapters', rt);
+    const adapterDest = path.join(resolvedTarget, '.ai', 'adapters', rt);
+    safeCopyDir(adapterSrc, adapterDest);
+
+    // Apply runtime-native project projections
+    if (rt === 'antigravity') {
+      safeCopy(path.join(FACTORY_ROOT, 'GEMINI.md'), path.join(resolvedTarget, 'GEMINI.md'));
+      safeCopy(path.join(FACTORY_ROOT, '.agents', 'hooks.json'), path.join(resolvedTarget, '.agents', 'hooks.json'));
+      safeCopy(path.join(FACTORY_ROOT, '.agents', 'security-hook.js'), path.join(resolvedTarget, '.agents', 'security-hook.js'));
+    }
+    if (rt === 'cursor') {
+      safeCopy(path.join(FACTORY_ROOT, '.cursor', 'rules', 'aew.mdc'), path.join(resolvedTarget, '.cursor', 'rules', 'aew.mdc'));
+    }
+    if (rt === 'vscode') {
+      safeCopy(path.join(FACTORY_ROOT, '.github', 'copilot-instructions.md'), path.join(resolvedTarget, '.github', 'copilot-instructions.md'));
+      safeCopyDir(path.join(FACTORY_ROOT, '.github', 'agents'), path.join(resolvedTarget, '.github', 'agents'));
+    }
+    if (rt === 'claude-code') {
+      safeCopy(path.join(FACTORY_ROOT, 'CLAUDE.md'), path.join(resolvedTarget, 'CLAUDE.md'));
+      safeCopy(path.join(FACTORY_ROOT, '.claude', 'rules', 'aew.md'), path.join(resolvedTarget, '.claude', 'rules', 'aew.md'));
+    }
+    if (rt === 'gemini-cli') {
+      safeCopy(path.join(FACTORY_ROOT, 'GEMINI.md'), path.join(resolvedTarget, 'GEMINI.md'));
+    }
+  }
+
+  // 11. Post-Stamping Validation
+  const validation = validateStampedDNA(resolvedTarget, selectedRuntimes);
+
+  return {
+    success: validation.passed,
+    targetDir: resolvedTarget,
+    selectedRuntimes,
+    created: createdFiles.length,
+    updated: updatedFiles.length,
+    preserved: preservedFiles.length,
+    createdFiles,
+    updatedFiles,
+    preservedFiles,
+    validation
+  };
+}
+
+function validateStampedDNA(targetDir, selectedRuntimes = ALL_RUNTIMES) {
+  const errors = [];
+  const warnings = [];
+
+  // Check constitution
+  if (!fs.existsSync(path.join(targetDir, 'AGENTS.md'))) {
+    errors.push('Missing core constitution: AGENTS.md');
+  }
+
+  // Check state
+  const stateFiles = ['project.json', 'tasks.json', 'decisions.json', 'blockers.json'];
+  for (const sf of stateFiles) {
+    if (!fs.existsSync(path.join(targetDir, '.ai', 'state', sf))) {
+      errors.push(`Missing state file: .ai/state/${sf}`);
+    }
+  }
+
+  // Check skills count
+  const skillsDir = path.join(targetDir, '.agents', 'skills');
+  if (!fs.existsSync(skillsDir)) {
+    errors.push('Missing skills directory: .agents/skills');
+  } else {
+    const presentSkills = fs.readdirSync(skillsDir);
+    for (const skill of EXECUTION_SKILLS) {
+      if (!presentSkills.includes(skill)) {
+        errors.push(`Missing canonical skill: ${skill}`);
+      }
+    }
+  }
+
+  // Check selected runtimes
+  for (const rt of selectedRuntimes) {
+    const adapterDir = path.join(targetDir, '.ai', 'adapters', rt);
+    if (!fs.existsSync(adapterDir)) {
+      warnings.push(`Adapter directory not stamped for runtime: ${rt}`);
     }
   }
 
   return {
-    success: true,
-    targetDir: resolvedTarget,
-    generatedFiles
+    passed: errors.length === 0,
+    errors,
+    warnings
   };
 }
 
@@ -337,15 +388,21 @@ function stampDNA(targetDir, options = {}) {
 if (require.main === module) {
   const target = process.argv[2];
   if (!target) {
-    console.error('Usage: node dna-stamper.js <targetDirectory> [--config <jsonFile>] [--force]');
+    console.error('Usage: node dna-stamper.js <targetDirectory> [--runtimes <all|list>] [--config <jsonFile>] [--force]');
     process.exit(1);
   }
 
   let options = {};
+  const runtimesIdx = process.argv.indexOf('--runtimes');
+  if (runtimesIdx !== -1 && process.argv[runtimesIdx + 1]) {
+    options.runtimes = process.argv[runtimesIdx + 1];
+  }
+
   const configIdx = process.argv.indexOf('--config');
   if (configIdx !== -1 && process.argv[configIdx + 1]) {
     try {
-      options = JSON.parse(fs.readFileSync(process.argv[configIdx + 1], 'utf8'));
+      const cfg = JSON.parse(fs.readFileSync(process.argv[configIdx + 1], 'utf8'));
+      options = { ...options, ...cfg };
     } catch (e) {
       console.warn(`Could not read config file: ${e.message}`);
     }
@@ -358,10 +415,11 @@ if (require.main === module) {
   try {
     const res = stampDNA(target, options);
     console.log(JSON.stringify(res, null, 2));
+    process.exit(res.success ? 0 : 1);
   } catch (err) {
     console.error(`Stamping error: ${err.message}`);
     process.exit(1);
   }
 }
 
-module.exports = { stampDNA };
+module.exports = { stampDNA, validateStampedDNA, EXECUTION_SKILLS };

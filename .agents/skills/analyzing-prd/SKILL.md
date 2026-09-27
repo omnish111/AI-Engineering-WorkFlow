@@ -43,5 +43,5 @@ Is PRD present?
 - Output requirements documented in structured machine-consumable format.
 
 # References
-- [PRD Template](file:///e:/AI%20Engineering%20Workflow/.ai/templates/prd-template.md)
-- [Decision Policy](file:///e:/AI%20Engineering%20Workflow/.ai/orchestration/decision-policy.json)
+- [PRD Template](../../../.ai/templates/prd-template.md)
+- [Decision Policy](../../../.ai/orchestration/decision-policy.json)

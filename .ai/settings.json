@@ -1,9 +1,9 @@
 {
-  "version": "3.0.0",
-  "architectureVersion": "v3-antigravity",
+  "version": "4.0.0",
+  "architectureVersion": "v4-portable-runtime",
   "project": {
     "name": "AI Engineering Workflow",
-    "description": "Antigravity-first, Skills-first AI engineering harness for PRD-to-software execution",
+    "description": "Portable multi-runtime, Skills-first AI engineering harness for PRD-to-software execution",
     "status": "active"
   },
   "orchestration": {
@@ -12,11 +12,12 @@
     "roleRegistry": "orchestration/role-registry.json",
     "modelRouting": "orchestration/model-routing.json",
     "taskClassifier": "orchestration/task-classifier.md",
-    "decisionPolicy": "orchestration/decision-policy.json",
+    "decisionPolicy": "policies/decision-policy.json",
     "contextManifest": "orchestration/context-manifest.json",
-    "checkpointPolicy": "orchestration/checkpoint-policy.json",
+    "checkpointPolicy": "policies/checkpoint-policy.json",
     "verificationSchema": "orchestration/verification-schema.json",
-    "parallelPolicy": "orchestration/parallel-policy.md"
+    "parallelPolicy": "policies/parallel-policy.md",
+    "securityPolicy": "policies/security-policy.json"
   },
   "workflow": {
     "model": "task-dag",
@@ -29,6 +30,8 @@
     "agents": ".agents/agents",
     "hooks": ".agents/hooks.json",
     "orchestration": ".ai/orchestration",
+    "policies": ".ai/policies",
+    "adapters": ".ai/adapters",
     "state": ".ai/state",
     "evaluations": "evals/golden-tasks",
     "templates": ".ai/templates",

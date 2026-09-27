@@ -1,0 +1,74 @@
+{
+  "version": "4.0",
+  "description": "Portable decision policy for adaptive Ask vs Act behavior across all agent runtimes",
+  "policy": {
+    "act_immediately": {
+      "description": "Known decisions that can be made autonomously without interrupting user flow",
+      "conditions": [
+        "Answer is explicitly stated in PRD or user instructions",
+        "Answer is defined in repository configuration or established conventions",
+        "Answer follows verified project patterns and rules",
+        "Action is reversible, safe, and within approved task scope"
+      ],
+      "examples": [
+        "File naming convention (defined in coding rules)",
+        "Module structure pattern (defined in architecture rules)",
+        "Test file location (defined in testing skill)",
+        "Import organization and lint formatting"
+      ]
+    },
+    "infer_and_act": {
+      "description": "High-confidence technical inferences from available context",
+      "minimumConfidence": 0.85,
+      "conditions": [
+        "PRD implies the technical choice with high confidence",
+        "Existing codebase patterns clearly dictate the convention",
+        "Tech stack constraints limit options to one viable choice",
+        "Standard software engineering best practice strongly favors one option"
+      ],
+      "examples": [
+        "Database schema structure aligning with existing data model",
+        "Multi-tenancy isolation pattern matching existing tenant queries",
+        "HTTP status codes and error envelope schema consistency",
+        "Cache key conventions matching existing Redis patterns"
+      ],
+      "requirement": "Record the inference in .ai/state/decisions.json with confidence score and rationale"
+    },
+    "research_first": {
+      "description": "Uncertain technical details that can be resolved via inspection or docs without user disruption",
+      "conditions": [
+        "Multiple viable technical options exist",
+        "Answer can be determined by reading existing code or dependency versions",
+        "Behavior depends on installed library API contracts",
+        "Technical feasibility requires localized spike"
+      ],
+      "examples": [
+        "Best pagination strategy for a specific query pattern",
+        "Whether an installed library supports a required feature",
+        "Performance implications of a query design"
+      ]
+    },
+    "ask_user": {
+      "description": "Genuinely ambiguous business requirements or high-blast-radius decisions requiring user choice",
+      "conditions": [
+        "Requirement has multiple conflicting business interpretations",
+        "High-risk architectural decision with irreversible consequences",
+        "Destructive action or secret/credential exposure",
+        "Production deployment or external service publishing",
+        "Business logic decision that cannot be inferred from technical context"
+      ],
+      "examples": [
+        "User role permissions hierarchy when not defined in PRD",
+        "Pricing model or billing tier definitions",
+        "Dropping legacy database tables or deleting production resources",
+        "Choice between incompatible third-party SaaS vendors"
+      ],
+      "format": "Formulate concise, numbered options with trade-offs and an engineering recommendation"
+    }
+  },
+  "escalationThresholds": {
+    "confidenceCutoff": 0.85,
+    "maxAutoRetries": 2,
+    "requireUserApprovalOnDestructive": true
+  }
+}

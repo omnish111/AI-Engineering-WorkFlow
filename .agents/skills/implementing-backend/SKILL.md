@@ -40,5 +40,5 @@ Backend Implementation
 - Proper error handling and status codes on all endpoints.
 
 # References
-- [Coding Rules](file:///e:/AI%20Engineering%20Workflow/.agents/rules/coding-rules.md)
-- [Security Invariants](file:///e:/AI%20Engineering%20Workflow/.agents/rules/security.md)
+- [Coding Rules](../../rules/coding-rules.md)
+- [Security Invariants](../../rules/security.md)

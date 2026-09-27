@@ -43,5 +43,5 @@ Verify Changes
 - Verification evidence attached to task state.
 
 # References
-- [Verifier Subagent](file:///e:/AI%20Engineering%20Workflow/.agents/agents/verifier.md)
-- [Verification Schema](file:///e:/AI%20Engineering%20Workflow/.ai/orchestration/verification-schema.json)
+- [Verifier Subagent](../../agents/verifier.md)
+- [Verification Schema](../../../.ai/orchestration/verification-schema.json)

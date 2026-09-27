@@ -42,5 +42,5 @@ Security Audit
 - Parameterized queries eliminate injection vectors.
 
 # References
-- [Security Invariants](file:///e:/AI%20Engineering%20Workflow/.agents/rules/security.md)
-- [Security Reviewer Subagent](file:///e:/AI%20Engineering%20Workflow/.agents/agents/security-reviewer.md)
+- [Security Invariants](../../rules/security.md)
+- [Security Reviewer Subagent](../../agents/security-reviewer.md)

@@ -1,0 +1,53 @@
+{
+  "id": "claude-code",
+  "name": "Claude Code",
+  "version": "4.0.0",
+  "runtimeType": "cli",
+  "status": "supported",
+  "officialDocs": [
+    "https://code.claude.com/docs/en/claude-directory"
+  ],
+  "discovery": {
+    "constitution": "CLAUDE.md",
+    "rules": [".claude/rules/", ".agents/rules/"],
+    "skills": [".agents/skills/", ".claude/skills/"],
+    "agents": [".claude/agents/", ".agents/agents/"]
+  },
+  "instructions": {
+    "primary": "CLAUDE.md",
+    "forwardsTo": "AGENTS.md"
+  },
+  "skillsMapping": {
+    "strategy": "direct-with-claude-symlink-fallback",
+    "canonicalPath": ".agents/skills/",
+    "compatibilityLocation": ".claude/skills/"
+  },
+  "roles": {
+    "strategy": "main-agent-role-handoff",
+    "customAgentsLocation": ".claude/agents/",
+    "contractPath": ".agents/agents/",
+    "supportedRoles": [
+      "planner",
+      "implementer",
+      "verifier",
+      "evaluator",
+      "reviewer",
+      "security-reviewer",
+      "researcher"
+    ]
+  },
+  "safety": {
+    "strategy": "claude-permission-system",
+    "policyPath": ".ai/policies/security-policy.json",
+    "interactiveApproval": true,
+    "preExecutionPolicyCheck": true
+  },
+  "execution": {
+    "supportsSubagents": false,
+    "supportsWorktrees": true,
+    "supportsMcp": true,
+    "supportsBrowser": false,
+    "supportsParallel": false,
+    "fallback": "Sequential execution with structured role handoffs and git commits"
+  }
+}

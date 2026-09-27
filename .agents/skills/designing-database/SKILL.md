@@ -43,5 +43,5 @@ Database Modification
 - Reversible migration scripts tested on clean local database.
 
 # References
-- [Architecture Rules](file:///e:/AI%20Engineering%20Workflow/.agents/rules/architecture-rules.md)
-- [Security Invariants](file:///e:/AI%20Engineering%20Workflow/.agents/rules/security.md)
+- [Architecture Rules](../../rules/architecture-rules.md)
+- [Security Invariants](../../rules/security.md)

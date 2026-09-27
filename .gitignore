@@ -73,3 +73,7 @@ out/
  
 # Git worktrees
 .worktrees/
+
+# Maintenance reports & scratch
+.ai/maintenance/reports/
+

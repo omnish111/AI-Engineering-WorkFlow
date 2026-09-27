@@ -1,0 +1,52 @@
+{
+  "id": "gemini-cli",
+  "name": "Gemini CLI",
+  "version": "4.0.0",
+  "runtimeType": "cli",
+  "status": "supported",
+  "officialDocs": [
+    "https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/skills.md",
+    "https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/creating-skills.md"
+  ],
+  "discovery": {
+    "constitution": "GEMINI.md",
+    "skills": [".agents/skills/", ".gemini/skills/"],
+    "instructions": "GEMINI.md"
+  },
+  "instructions": {
+    "primary": "GEMINI.md",
+    "forwardsTo": "AGENTS.md"
+  },
+  "skillsMapping": {
+    "strategy": "direct-or-gemini-skills-fallback",
+    "canonicalPath": ".agents/skills/",
+    "compatibilityLocation": ".gemini/skills/"
+  },
+  "roles": {
+    "strategy": "main-agent-role-handoff",
+    "contractPath": ".agents/agents/",
+    "supportedRoles": [
+      "planner",
+      "implementer",
+      "verifier",
+      "evaluator",
+      "reviewer",
+      "security-reviewer",
+      "researcher"
+    ]
+  },
+  "safety": {
+    "strategy": "cli-confirmation-and-approval",
+    "policyPath": ".ai/policies/security-policy.json",
+    "interactiveApproval": true,
+    "preExecutionPolicyCheck": true
+  },
+  "execution": {
+    "supportsSubagents": false,
+    "supportsWorktrees": true,
+    "supportsMcp": false,
+    "supportsBrowser": false,
+    "supportsParallel": false,
+    "fallback": "Sequential execution with DAG state updates in .ai/state/tasks.json"
+  }
+}

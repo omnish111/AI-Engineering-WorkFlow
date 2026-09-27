@@ -41,5 +41,5 @@ Onboard Codebase
 - Stamped project passes internal validation tests.
 
 # References
-- [DNA Stamper Script](file:///e:/AI%20Engineering%20Workflow/.ai/scripts/dna-stamper.js)
-- [Project Scanner Script](file:///e:/AI%20Engineering%20Workflow/.ai/scripts/project-scanner.js)
+- [DNA Stamper Script](../../../.ai/scripts/dna-stamper.js)
+- [Project Scanner Script](../../../.ai/scripts/project-scanner.js)
